@@ -7,6 +7,7 @@
 #define NNN(instr) (instr & 0x0fff) 
 #define KK(instr) (instr & 0x00ff) 
 #include "SDL2/SDL.h"
+#include <algorithm>
 
 #include <fstream>
 using namespace std;
@@ -22,7 +23,7 @@ void Chip8::start(){
         //cout<<"memory 0x228 should be "<<memory[552]<<endl; 
         pc += 2;
      
-        //flag = true;
+        
         //cout<<"pc after "<<pc<<endl;
         //2.Decode
 
@@ -236,15 +237,17 @@ void Chip8::start(){
         case 0xE000:
             switch(kk){
                 case 0x9E:
-                    if(V[x] <= 0xF && keys[V[x]] == 1){//if the key is pressed
+                    currentKeyStates = SDL_GetKeyboardState( NULL );
+                    if(currentKeyStates[SDL_GetScancodeFromKey(V[x])]){//if key in Vx is pressed skip next inst
                         pc+=2;
                     }
                     cout<<"SKP Vx"<<endl;
                     break;
                 case 0xA1:
-                    if(V[x] <= 0xF && keys[V[x]] == 0){//if the key is not pressed
+                    currentKeyStates = SDL_GetKeyboardState( NULL );
+                    if(currentKeyStates[SDL_GetScancodeFromKey(V[x])] == 0){//if Vx not pressed skip
                         pc+=2;
-                    }
+                    }  
                     cout<<"SKNP Vx"<<endl;
                     break;
             }
@@ -256,12 +259,22 @@ void Chip8::start(){
                     cout<<"LD Vx, DT"<<endl;
                     break;
                 case 0x0A:
-                    //decrement pc unless a key is pressed NOT READY!!!
-                    if(keyPressed){
-                        V[x] = scanCode;
-                    }else{
-                        pc-=2;
+                while(flag){
+                    while( SDL_PollEvent(&event) )
+                    {  
+                    switch(event.type)
+                        {
+                        case SDL_KEYDOWN:
+                            auto c = find(begin(keys),end(keys),SDL_GetScancodeFromKey(event.key.keysym.sym));
+                            if(c != end(keys)){
+                                V[x] = SDL_GetScancodeFromKey(event.key.keysym.sym);
+                                flag = false;
+                                break;
+                            }
+                        }
                     }
+                }
+                    flag = true;
                     cout<<"LD Vx, K"<<endl;
                     break;
                 case 0x15:
@@ -277,10 +290,6 @@ void Chip8::start(){
                     cout<<"ADD I, Vx"<<endl;
                     break;
                 case 0x29:
-                 /*   if(V[x] > 0xF){
-                        cerr<<V[x]<<" is an Invalid font"<<endl; NOT READY
-                        exit(1);
-                    }*/
                     I = FONTSTART + (V[x] * 5);
                     cout<<"LD F, Vx"<<endl;
                     break;
@@ -399,7 +408,7 @@ void Chip8::setUp(SDL_Renderer*& render){
     }
     //set the pc to start at 0x200
     pc = 0x200;
-    //flag = true;
+    flag = true;
 
     Chiprenderer = render;//Chip8 renderer pts to the windows one
 }
@@ -412,5 +421,29 @@ void Chip8::draw(int x, int y){
 }
 
 void Chip8::setKeys(){
+/*1   2   3   4
+Q   W   E   R
+A   S   D   F
+Z   X   C   V*/
+keys[0] = SDL_SCANCODE_1;
+keys[1] = SDL_SCANCODE_2;
+keys[2] = SDL_SCANCODE_3;
+keys[3] = SDL_SCANCODE_4;
+
+keys[4] = SDL_SCANCODE_Q;
+keys[5] = SDL_SCANCODE_W;
+keys[6] = SDL_SCANCODE_E;
+keys[7] = SDL_SCANCODE_R;
+
+keys[8] = SDL_SCANCODE_A;
+keys[9] = SDL_SCANCODE_S;
+keys[10] = SDL_SCANCODE_D;
+keys[11] = SDL_SCANCODE_F;
+
+keys[12] = SDL_SCANCODE_Z;
+keys[13] = SDL_SCANCODE_X;
+keys[14] = SDL_SCANCODE_C;
+keys[15] = SDL_SCANCODE_V;
+
 
 }

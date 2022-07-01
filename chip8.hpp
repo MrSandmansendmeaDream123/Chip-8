@@ -26,6 +26,8 @@ class Chip8{
         void setUp(SDL_Renderer*& render);
         void draw(int x,int y);
         void setKeys();  
+        SDL_Event event;
+        const Uint8* currentKeyStates;
     private:
         /*  Direct Access to up to 4kilobytes of RAM
         0x000 (0) -> 0x1FF (511) Reserved For Interpreter (Not to be used by programs)
@@ -44,7 +46,8 @@ class Chip8{
         
         unsigned short pc;//Program Counter 16-bit pointer
 
-        
+        bool flag;
+
         std::stack<unsigned short> mystack;//Stack 16-bit
 
         

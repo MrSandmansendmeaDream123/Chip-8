@@ -47,8 +47,9 @@ int main(int argc, char* args[]){
     myChip.setUp( renderer);
     //cout << "Provide the ROM you would like to play"<<endl;
     //cin >> romFile;
-    romFile = "test_opcode.ch8";
+    romFile = "testkey.ch8";
     myChip.loadRom(romFile);
+    myChip.setKeys();
     
    
 
@@ -81,12 +82,12 @@ int main(int argc, char* args[]){
 
         duration<double,std::milli> delta = now - prevFrame;
         
-        //if(delta.count() > 500.0){
+        if(delta.count() > 700.0){
         prevFrame = now;
-        std::chrono::duration<double, std::milli> delta_ms(700.0 - delta.count());
+        std::chrono::duration<double, std::milli> delta_ms(500.0 - delta.count());
         auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
         std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
-       // }
+     }
         count++;
     }
     SDL_Delay(1000);
