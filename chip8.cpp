@@ -238,14 +238,15 @@ void Chip8::start(){
             switch(kk){
                 case 0x9E:
                     currentKeyStates = SDL_GetKeyboardState( NULL );
-                    if(currentKeyStates[SDL_GetScancodeFromKey(V[x])]){//if key in Vx is pressed skip next inst
+                    if(currentKeyStates[SDL_GetScancodeFromKey(keys[V[x]])]){//if key in Vx is pressed skip next inst
                         pc+=2;
                     }
+                    cout<<"YOU PRESSED "<< SDL_GetScancodeFromKey(V[x]) << endl;
                     cout<<"SKP Vx"<<endl;
                     break;
                 case 0xA1:
                     currentKeyStates = SDL_GetKeyboardState( NULL );
-                    if(currentKeyStates[SDL_GetScancodeFromKey(V[x])] == 0){//if Vx not pressed skip
+                    if(currentKeyStates[SDL_GetScancodeFromKey(keys[V[x]])] == 0){//if Vx not pressed skip
                         pc+=2;
                     }  
                     cout<<"SKNP Vx"<<endl;
@@ -265,10 +266,12 @@ void Chip8::start(){
                     switch(event.type)
                         {
                         case SDL_KEYDOWN:
-                            auto c = find(begin(keys),end(keys),SDL_GetScancodeFromKey(event.key.keysym.sym));
+                            auto currKey = SDL_GetScancodeFromKey(event.key.keysym.sym);
+                            auto c = find(begin(keys),end(keys),currKey);
                             if(c != end(keys)){
-                                V[x] = SDL_GetScancodeFromKey(event.key.keysym.sym);
+                                V[x] = keyPad.at(currKey);
                                 flag = false;
+                                cout<<"YOU PRESSED "<< SDL_GetScancodeFromKey(event.key.keysym.sym) << endl;
                                 break;
                             }
                         }
@@ -445,5 +448,27 @@ keys[13] = SDL_SCANCODE_X;
 keys[14] = SDL_SCANCODE_C;
 keys[15] = SDL_SCANCODE_V;
 
+//Key: User Value: Program
+ keyPad = {
+    {SDL_SCANCODE_1,0x1},
+    {SDL_SCANCODE_2, 0x2},
+    {SDL_SCANCODE_3, 0x3},
+    {SDL_SCANCODE_4,0xC},
+    {SDL_SCANCODE_Q, 0x4},
+    {SDL_SCANCODE_W, 0x5},
+    {SDL_SCANCODE_E,0x6},
+    {SDL_SCANCODE_R, 0xD},
+    {SDL_SCANCODE_A, 0x7},
+    {SDL_SCANCODE_S,0x8},
+    {SDL_SCANCODE_D, 0x9},
+    {SDL_SCANCODE_F, 0xE},
+    {SDL_SCANCODE_Z,0xA},
+    {SDL_SCANCODE_X, 0x0},
+    {SDL_SCANCODE_C,0xB},
+    {SDL_SCANCODE_V, 0xF}
+};
+
+
 
 }
+

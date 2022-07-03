@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "SDL2/SDL.h"
 #include <bitset>
+#include <unordered_map>
 
 #ifndef _chip_hpp_
 #define _chip_hpp_
@@ -26,6 +27,8 @@ class Chip8{
         void setUp(SDL_Renderer*& render);
         void draw(int x,int y);
         void setKeys();  
+
+
         SDL_Event event;
         const Uint8* currentKeyStates;
     private:
@@ -36,7 +39,8 @@ class Chip8{
         */
         unsigned char memory [MEMORYSIZE]; 
 
-        
+        std::unordered_map<SDL_Scancode,int> keyPad;
+
         bool display [64][32] {};//pixels total of 2048 or 64 * 32
         //std::bitset<SCREENWIDTH*SCREENHEIGHT>;
         bool keyPressed;
