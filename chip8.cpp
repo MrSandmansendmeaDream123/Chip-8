@@ -64,6 +64,8 @@ void Chip8::start(){
                         display[i][j] = 0;
                     }
                 }
+                SDL_SetRenderDrawColor(Chiprenderer, 0, 0, 0, 255);
+                SDL_RenderClear(Chiprenderer);
                 cout<<"CLS"<<endl;
                 break;
             case 0xEE:

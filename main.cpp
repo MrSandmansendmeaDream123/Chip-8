@@ -17,6 +17,10 @@ int main(int argc, char* args[]){
 
     Chip8 myChip;
 
+    std::string romFile;
+    std::cout << "Provide the ROM you would like to play"<<std::endl;
+    std::cin >> romFile;
+
     //RENDERING
     SDL_Window *window;
     SDL_Renderer* renderer;
@@ -43,11 +47,10 @@ int main(int argc, char* args[]){
     /*    
         void draw();
         void setKeys();  */
-    std::string romFile;
+
     myChip.setUp( renderer);
-    //cout << "Provide the ROM you would like to play"<<endl;
-    //cin >> romFile;
-    romFile = "testkey.ch8";
+  
+    //romFile = "final.ch8";
     myChip.loadRom(romFile);
     myChip.setKeys();
     
@@ -58,12 +61,13 @@ int main(int argc, char* args[]){
 
 
     
-    auto now = steady_clock::now();
+    //auto now = steady_clock::now();
     auto prevFrame = steady_clock::now();
     //MAIN LOOP
     int count = 0;
     SDL_Event evt;
     bool programrunning = true;
+    bool t = false;
 
     while(programrunning){
         while( SDL_PollEvent(&evt) )
@@ -71,22 +75,22 @@ int main(int argc, char* args[]){
             switch(evt.type)
             {
             case SDL_QUIT:  programrunning = false; break;
-       
+            case SDL_KEYDOWN: std::cout<<"Ahah!!!!"; t = true; break; 
             }
+            if(t)
+                break;
     }
         std::cout<<count<<": ";
-        now = steady_clock::now();
-        int b = beep();
-        myChip.start();
-        //myChip.draw(SCREENWIDTH-count,SCREENHEIGHT-count);
 
+        auto now = steady_clock::now();
         duration<double,std::milli> delta = now - prevFrame;
         
-        if(delta.count() > 700.0){
+        if(delta.count() > .05){
         prevFrame = now;
-        std::chrono::duration<double, std::milli> delta_ms(500.0 - delta.count());
-        auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
-        std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
+        myChip.start();
+        //std::chrono::duration<double, std::milli> delta_ms(1200.0 - delta.count());
+        //auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
+        //std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
      }
         count++;
     }
